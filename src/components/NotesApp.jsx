@@ -10,6 +10,7 @@ import { Route, Routes } from "react-router-dom";
 import AddNote from "../pages/AddNote";
 import ArchivedNote from "../pages/ArchivedNote";
 import NoteDetailPage from "../pages/NoteDetail";
+import RegisterPage from "../pages/RegisterPage";
 import LoginPage from "../pages/LoginPage";
 
 const NotesApp = () => {
@@ -108,6 +109,7 @@ const NotesApp = () => {
             />}
           />
           <Route path= "/login" element={<LoginPage/>} />
+          <Route path= "/register" element={<RegisterPage/>} />
           <Route path="/add" element={<AddNote onAddNotesHandler={onAddNotesHandler} />} />
           <Route path="/archived" element={
             <ArchivedNote
