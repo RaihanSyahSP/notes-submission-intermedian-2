@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react"
 import { useSnackbar } from "notistack";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Route, Routes } from "react-router-dom";
 
 import Navbar from "./Navbar"
 import ErrorPage from "../pages/ErrorPage";
-import { getInitialData } from "../utils/data"
 import HomePage from "../pages/HomePage";
-import { Route, Routes } from "react-router-dom";
 import AddNote from "../pages/AddNote";
 import ArchivedNote from "../pages/ArchivedNote";
 import NoteDetailPage from "../pages/NoteDetail";
@@ -14,9 +12,10 @@ import RegisterPage from "../pages/RegisterPage";
 import LoginPage from "../pages/LoginPage";
 
 const NotesApp = () => {
-    const [initialNotes, setInitialNotes] = useState(getInitialData());
+    const [authUser, setAuthUser] = useState(null)
+    const [initialNotes, setInitialNotes] = useState([]);
     const [searchParams, setSearchParams] = useSearchParams();
-    const [notes, setNotes] = useState(initialNotes);
+    const [notes, setNotes] = useState([]);
     const { enqueueSnackbar } = useSnackbar();
     const [keyword, setKeyword] = useState(searchParams.get("keyword") || "");
 
@@ -80,7 +79,7 @@ const NotesApp = () => {
       }
       changeSearchParams(search);
     };
-  
+
    useEffect(() => {
      setKeyword(searchParams.get("keyword") || ""); 
      const initialKeyword = searchParams.get("keyword") || "";
@@ -91,6 +90,19 @@ const NotesApp = () => {
        setNotes(initialNotes);
      }
    }, [searchParams, initialNotes]);
+  
+  if (authUser === null) {
+   return (
+        <div>
+          <main>
+            <Routes>
+              <Route path="/*" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+            </Routes>
+          </main>
+      </div>
+    );
+  }
     
 
   return (

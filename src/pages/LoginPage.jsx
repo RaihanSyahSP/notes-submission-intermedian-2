@@ -27,7 +27,7 @@ const LoginPage = () => {
               <button className="btn btn-primary">Login</button>
             </div>
             <label className="label">
-              <a href="#" className="label-text-alt link link-hover underline-offset-2">
+              <a href="/register" className="label-text-alt link link-hover underline-offset-2">
                 Dont have any account,register here
               </a>
             </label>
