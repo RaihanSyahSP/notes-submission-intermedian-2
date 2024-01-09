@@ -33,6 +33,11 @@ const NotesApp = () => {
       setAuthUser(data)
     }
   
+    const onLogoutHandler = () => {
+      localStorage.removeItem("accessToken");
+      setAuthUser(null);
+    }
+  
     const checkAuth = async () => {
       const storedToken = localStorage.getItem("accessToken");
 
@@ -135,7 +140,12 @@ const NotesApp = () => {
   return (
     <div className="mx-auto h-screen">
       <header>
-        <Navbar onSearch={(search) => onSearchHandler(search)} keyword={keyword} />
+        <Navbar
+          onSearch={(search) => onSearchHandler(search)}
+          keyword={keyword}
+          logout={onLogoutHandler}
+          name={authUser.name}
+        />
       </header>
 
       <main className="max-w-7xl mx-auto">
