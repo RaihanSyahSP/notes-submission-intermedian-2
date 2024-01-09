@@ -71,7 +71,7 @@ const RegisterPage = () => {
               {!isPassCorrect && <p className="text-error mt-1">Password and Confirmation Password must match</p>}
             </div>
             <label className="label">
-              <a href="/" className="label-text-alt link link-hover">
+              <a href="/login" className="label-text-alt link link-hover">
                 Back to Login
               </a>
             </label>

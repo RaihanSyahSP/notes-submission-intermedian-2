@@ -31,10 +31,10 @@ async function login({ email, password }) {
 
   if (responseJson.status !== 'success') {
     alert(responseJson.message);
-    return { error: true, data: null };
+    return { error: true, res:responseJson };
   }
 
-  return { error: false, data: responseJson.data };
+  return { error: false, res:responseJson};
 }
 
 async function register({ name, email, password }) {

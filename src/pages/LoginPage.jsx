@@ -1,22 +1,52 @@
 import React from 'react'
+import { useSnackbar } from "notistack";
+import { useNavigate } from 'react-router-dom';
 
-const LoginPage = () => {
+import useInput from '../customHooks/useInput';
+import { login } from '../utils/network-data';
+
+const LoginPage = ({loginSuccess}) => {
+  const navigate = useNavigate()
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [email, onEmailChange] = useInput("");
+  const [password, onPasswordChange] = useInput("");
+
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+
+      const { error, res} = await login({ email, password });
+
+      if (!error) {
+        loginSuccess(res.data)
+        enqueueSnackbar(res.message, { variant: "success" });
+        navigate("/");
+      } else {
+        enqueueSnackbar(res.message, { variant: "error" });
+      }
+    } catch (error) {
+      console.log(error)
+      enqueueSnackbar(error.message, { variant: "error" });
+    }
+  };
+
   return (
     <section className="hero min-h-screen">
       <div className="hero-content flex-col space-x-16 lg:flex-row">
         <div className="card shrink-0 w-full lg:w-1/2 max-w-lg shadow-2xl bg-base-100">
-          <form className="card-body">
+          <form className="card-body" onSubmit={handleSubmit}>
             <div className="form-control">
               <label className="label" htmlFor="email">
                 <span className="label-text">Email</span>
               </label>
-              <input type="email" placeholder="email" id="email" className="input input-bordered" required />
+              <input type="email" value={email} placeholder="email" id="email" className="input input-bordered" onChange={onEmailChange} required />
             </div>
             <div className="form-control">
               <label className="label" htmlFor="password">
                 <span className="label-text">Password</span>
               </label>
-              <input type="password" id="password" className="input input-bordered" required />
+              <input type="password" value={password} id="password" className="input input-bordered" onChange={onPasswordChange} required />
               <label className="label">
                 <a href="#" className="label-text-alt link link-hover">
                   Forgot password?

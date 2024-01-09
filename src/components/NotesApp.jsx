@@ -3,6 +3,7 @@ import { useSnackbar } from "notistack";
 import { useSearchParams, Route, Routes } from "react-router-dom";
 
 import Navbar from "./Navbar"
+import { getUserLogged, putAccessToken } from "../utils/network-data";
 import ErrorPage from "../pages/ErrorPage";
 import HomePage from "../pages/HomePage";
 import AddNote from "../pages/AddNote";
@@ -22,6 +23,27 @@ const NotesApp = () => {
     const changeSearchParams = (search) => {
       setSearchParams({ keyword: search });
       setKeyword(search);
+    };
+    
+    const onLoginSuccess = async ({ accessToken }) => {
+      putAccessToken(accessToken)
+      
+      const { data } = await getUserLogged()
+
+      setAuthUser(data)
+    }
+  
+    const checkAuth = async () => {
+      const storedToken = localStorage.getItem("accessToken");
+
+      if (storedToken) {
+        try {
+          const { data } = await getUserLogged();
+          setAuthUser(data);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      }
     };
 
     const onAddNotesHandler = ({ title, body, createdAt, archived }) => {
@@ -91,12 +113,17 @@ const NotesApp = () => {
      }
    }, [searchParams, initialNotes]);
   
+    useEffect(() => {
+      checkAuth();
+    }, []);
+
+  
   if (authUser === null) {
    return (
         <div>
           <main>
             <Routes>
-              <Route path="/*" element={<LoginPage />} />
+              <Route path="/*" element={<LoginPage loginSuccess={onLoginSuccess} />} />
               <Route path="/register" element={<RegisterPage />} />
             </Routes>
           </main>
