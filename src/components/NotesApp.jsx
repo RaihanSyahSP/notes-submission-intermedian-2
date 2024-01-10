@@ -3,7 +3,7 @@ import { useSnackbar } from "notistack";
 import { useSearchParams, Route, Routes } from "react-router-dom";
 
 import Navbar from "./Navbar"
-import { getUserLogged, putAccessToken, getActiveNotes } from "../utils/network-data";
+import { getUserLogged, putAccessToken, getActiveNotes, addNote } from "../utils/network-data";
 import ErrorPage from "../pages/ErrorPage";
 import HomePage from "../pages/HomePage";
 import AddNote from "../pages/AddNote";
@@ -72,8 +72,7 @@ const NotesApp = () => {
         archived,
       };
 
-      setNotes((prevState) => [...prevState, newNote]);
-      setInitialNotes((prevInitialNotes) => [...prevInitialNotes, newNote]);
+      addNote(newNote)
     };
 
     const onDeleteNoteHandler = (id) => {  
@@ -133,7 +132,7 @@ const NotesApp = () => {
     useEffect(() => {
       checkAuth();
       getActiveNotesHandler();
-    }, []);
+    }, [notes]);
   
     
      if (loading) {
