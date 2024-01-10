@@ -3,7 +3,13 @@ import { useSnackbar } from "notistack";
 import { useSearchParams, Route, Routes } from "react-router-dom";
 
 import Navbar from "./Navbar"
-import { getUserLogged, putAccessToken, getActiveNotes, addNote } from "../utils/network-data";
+import {
+  getUserLogged,
+  putAccessToken,
+  getActiveNotes,
+  addNote,
+  deleteNote
+} from "../utils/network-data";
 import ErrorPage from "../pages/ErrorPage";
 import HomePage from "../pages/HomePage";
 import AddNote from "../pages/AddNote";
@@ -73,12 +79,20 @@ const NotesApp = () => {
       };
 
       addNote(newNote)
+
+      // setNotes((prevState) => [...prevState, newNote]);
+      // setInitialNotes((prevInitialNotes) => [...prevInitialNotes, newNote]);
     };
 
-    const onDeleteNoteHandler = (id) => {  
-      setNotes((prevState) => prevState.filter((note) => note.id !== id));
-      setInitialNotes((prevInitialNotes) => prevInitialNotes.filter((note) => note.id !== id));
-      enqueueSnackbar("Note deleted successfully", { variant: "success" });
+    const onDeleteNoteHandler = async (id) => {  
+      // setNotes((prevState) => prevState.filter((note) => note.id !== id));
+      // setInitialNotes((prevInitialNotes) => prevInitialNotes.filter((note) => note.id !== id));
+      try {
+        await deleteNote(id)
+        enqueueSnackbar("Note deleted successfully", { variant: "success" });
+      } catch {
+        enqueueSnackbar("Error deleting note", { variant: "error" });
+      }
     };
 
     const onArchivedNoteHandler = (id) => {

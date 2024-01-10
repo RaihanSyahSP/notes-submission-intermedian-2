@@ -28,7 +28,7 @@ const Modal = ({id, title, deleteHandler}) => {
 export default Modal
 
 Modal.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   deleteHandler: PropTypes.func.isRequired,
 };
