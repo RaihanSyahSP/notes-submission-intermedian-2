@@ -3,7 +3,7 @@ import { useSnackbar } from "notistack";
 import { useSearchParams, Route, Routes } from "react-router-dom";
 
 import Navbar from "./Navbar"
-import { getUserLogged, putAccessToken } from "../utils/network-data";
+import { getUserLogged, putAccessToken, getActiveNotes } from "../utils/network-data";
 import ErrorPage from "../pages/ErrorPage";
 import HomePage from "../pages/HomePage";
 import AddNote from "../pages/AddNote";
@@ -15,6 +15,7 @@ import LoginPage from "../pages/LoginPage";
 const NotesApp = () => {
     const [authUser, setAuthUser] = useState(null)
     const [initialNotes, setInitialNotes] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [searchParams, setSearchParams] = useSearchParams();
     const [notes, setNotes] = useState([]);
     const { enqueueSnackbar } = useSnackbar();
@@ -48,6 +49,17 @@ const NotesApp = () => {
         } catch (error) {
           console.error("Error fetching user data:", error);
         }
+      }
+       setLoading(false);
+    };
+  
+    const getActiveNotesHandler = async () => {
+      try {
+        const { data } = await getActiveNotes();
+        setNotes(data);
+        setInitialNotes(data);
+      } catch (error) {
+        enqueueSnackbar("Error fetching notes", { variant: "error" });
       }
     };
 
@@ -106,7 +118,7 @@ const NotesApp = () => {
       }
       changeSearchParams(search);
     };
-
+    
    useEffect(() => {
      setKeyword(searchParams.get("keyword") || ""); 
      const initialKeyword = searchParams.get("keyword") || "";
@@ -120,7 +132,13 @@ const NotesApp = () => {
   
     useEffect(() => {
       checkAuth();
+      getActiveNotesHandler();
     }, []);
+  
+    
+     if (loading) {
+       return <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 loading loading-spinner loading-lg"></span>;
+     }
 
   
   if (authUser === null) {
