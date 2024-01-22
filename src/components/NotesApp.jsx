@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react"
 import { useSnackbar } from "notistack";
 import { useSearchParams, Route, Routes } from "react-router-dom";
@@ -8,7 +9,10 @@ import {
   putAccessToken,
   getActiveNotes,
   addNote,
-  deleteNote
+  deleteNote,
+  archiveNote,
+  unarchiveNote,
+  getArchivedNotes
 } from "../utils/network-data";
 import ErrorPage from "../pages/ErrorPage";
 import HomePage from "../pages/HomePage";
@@ -24,6 +28,7 @@ const NotesApp = () => {
     const [loading, setLoading] = useState(true);
     const [searchParams, setSearchParams] = useSearchParams();
     const [notes, setNotes] = useState([]);
+    const [archivedNotes, setArchivedNotes] = useState([]);
     const { enqueueSnackbar } = useSnackbar();
     const [keyword, setKeyword] = useState(searchParams.get("keyword") || "");
 
@@ -68,8 +73,19 @@ const NotesApp = () => {
         enqueueSnackbar("Error fetching notes", { variant: "error" });
       }
     };
+    
+    const getArchivedNotesHandler = async () => {
+      try {
+        const { data } = await getArchivedNotes();
+        setArchivedNotes(data);
+        // setInitialNotes(data);
+      } catch (error) {
+        enqueueSnackbar("Error fetching archived notes", { variant: "error" });
+      }
+    };
 
-    const onAddNotesHandler = ({ title, body, createdAt, archived }) => {
+
+    const onAddNotesHandler = async ({ title, body, createdAt, archived }) => {
       const newNote = {
         id: +new Date(),
         title,
@@ -78,15 +94,10 @@ const NotesApp = () => {
         archived,
       };
 
-      addNote(newNote)
-
-      // setNotes((prevState) => [...prevState, newNote]);
-      // setInitialNotes((prevInitialNotes) => [...prevInitialNotes, newNote]);
+      await addNote(newNote)
     };
 
     const onDeleteNoteHandler = async (id) => {  
-      // setNotes((prevState) => prevState.filter((note) => note.id !== id));
-      // setInitialNotes((prevInitialNotes) => prevInitialNotes.filter((note) => note.id !== id));
       try {
         await deleteNote(id)
         enqueueSnackbar("Note deleted successfully", { variant: "success" });
@@ -95,32 +106,24 @@ const NotesApp = () => {
       }
     };
 
-    const onArchivedNoteHandler = (id) => {
-      setNotes((prevState) => {
-        return prevState.map((note) => {
-          if (note.id === id) {
-            return {
-              ...note,
-              archived: !note.archived,
-            };
-          }
-          return note;
-        });
-      });
-
-      setInitialNotes((prevState) => {
-        return prevState.map((note) => {
-          if (note.id === id) {
-            return {
-              ...note,
-              archived: !note.archived,
-            };
-          }
-          return note;
-        });
-      });
-      enqueueSnackbar("Note archived successfully", { variant: "success" });
+    const onArchivedNoteHandler = async (id) => {
+      try {
+        await archiveNote(id)
+        enqueueSnackbar("Note archived successfully", { variant: "success" });
+      } catch (error) {
+          enqueueSnackbar("Error archiving note", { variant: "error" });
+      } 
     };
+  
+
+    const unarchiveNoteHandler = async (id) => {
+      try {
+        await unarchiveNote(id);
+        enqueueSnackbar("Note unarchived successfully", { variant: "success" });
+      } catch (error) {
+        enqueueSnackbar("Error unarchived note", { variant: "error" });
+      } 
+    }
 
     const onSearchHandler = (search) => {
       if (search === "") {
@@ -146,8 +149,13 @@ const NotesApp = () => {
     useEffect(() => {
       checkAuth();
       getActiveNotesHandler();
-    }, [notes]);
+      getArchivedNotesHandler();
+    }, []);
   
+  useEffect(() => {
+    getArchivedNotesHandler();
+    getActiveNotesHandler();
+  }, [notes]);
     
      if (loading) {
        return <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 loading loading-spinner loading-lg"></span>;
@@ -193,9 +201,10 @@ const NotesApp = () => {
           <Route path="/add" element={<AddNote onAddNotesHandler={onAddNotesHandler} />} />
           <Route path="/archived" element={
             <ArchivedNote
-              notes={notes}
+              archivedNotes={archivedNotes}
               archivedHandler={onArchivedNoteHandler}
               deleteHandler={onDeleteNoteHandler}
+              unarchiveHandler={unarchiveNoteHandler}
             />}
           />
           <Route path="/note/:id" element={

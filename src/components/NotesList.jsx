@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import NotesItem from './NotesItem'
 
 
-const NotesList = ({ notes, deleteHandler, archivedHandler }) => {
+const NotesList = ({ notes, deleteHandler, archivedHandler, unarchiveHandler }) => {
     return (
       <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
         {notes.map(note => (
@@ -18,6 +18,7 @@ const NotesList = ({ notes, deleteHandler, archivedHandler }) => {
             archived={note.archived}
             deleteHandler={deleteHandler}
             archivedHandler={archivedHandler}
+            unarchiveHandler={unarchiveHandler}
           />
         ))}                            
       </div>

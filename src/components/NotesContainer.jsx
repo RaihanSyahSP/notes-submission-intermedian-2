@@ -6,9 +6,9 @@ import Message from './Message';
 import { Link, useLocation } from 'react-router-dom';
 import FloatingButton from './FloatingButton';
 
-const NotesContainer = ({ notes, deleteHandler, archivedHandler }) => {
-  const archivedNotes =  notes.filter((note) => note.archived);
-  const unarchivedNotes = notes.filter((note) => !note.archived);
+const NotesContainer = ({ notes, deleteHandler, archivedHandler, unarchiveHandler }) => {
+  const archivedNotes = notes.filter((note) => note.archived === true);
+  const unarchivedNotes = notes.filter((note) => note.archived === false);
   const location = useLocation();
 
   return (
@@ -17,31 +17,21 @@ const NotesContainer = ({ notes, deleteHandler, archivedHandler }) => {
         <div className="col-span-1 mt-24">
           <h2 className="text-3xl font-bold text-center md:text-5xl">All Notes</h2>
           <Link to="/add">
-            <FloatingButton/>
+            <FloatingButton />
           </Link>
-          {
-            unarchivedNotes.length > 0 ? (
-              <NotesList notes={unarchivedNotes} deleteHandler={deleteHandler} archivedHandler={archivedHandler} />
-            ) : (
-              <Message title="There is no one note" />
-            )
-          }  
+          {unarchivedNotes.length > 0 ? <NotesList notes={unarchivedNotes} deleteHandler={deleteHandler} archivedHandler={archivedHandler} /> : <Message title="There is no one note" />}
         </div>
       )}
 
       {location.pathname === "/archived" && (
         <div className="col-span-1 mt-24">
-          <h2 className='text-3xl font-bold text-center md:text-5xl'>Archived Notes</h2>
-          {archivedNotes.length > 0 ? (
-            <NotesList notes={archivedNotes} deleteHandler={deleteHandler} archivedHandler={archivedHandler} />
-          ) : (
-            <Message title="There is no archived notes" />
-          )}
+          <h2 className="text-3xl font-bold text-center md:text-5xl">Archived Notes</h2>
+          {archivedNotes.length > 0 ? <NotesList notes={archivedNotes} deleteHandler={deleteHandler} archivedHandler={archivedHandler} unarchiveHandler={unarchiveHandler} /> : <Message title="There is no archived notes" />}
         </div>
       )}
     </div>
   );
-}
+};
 
 export default NotesContainer
 

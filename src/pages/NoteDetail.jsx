@@ -9,8 +9,10 @@ import Message from "../components/Message";
 const NoteDetailPage = ({ notes }) => {
   const { id } = useParams();
   const history = useNavigate();
+  // console.log(notes)
 
-  const noteDetail = notes.find((note) => note.id === parseInt(id));
+  const noteDetail = notes.find((note) => note.id === id);
+  // console.log(noteDetail)
 
   if (!noteDetail) {
     return <Message message="Note not found" />;

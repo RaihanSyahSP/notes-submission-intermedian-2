@@ -5,14 +5,14 @@ import PropTypes from "prop-types";
 import { showFormattedDate } from '../utils/data';
 import Modal from './Modal';
 
-const NotesItem = ({ id, title, body, createdAt, archivedHandler, archived, deleteHandler }) => {
+const NotesItem = ({ id, title, body, createdAt, archivedHandler, archived, deleteHandler, unarchiveHandler }) => {
   const navigate = useNavigate();
 
   const handleNoteClick = () => {
     navigate(`/note/${id}`);
-  }
+  };
 
-	return (
+  return (
     <div className="card w-full shadow-2xl mt-5 bg-base-100 border hover:border-secondary hover:cursor-pointer" key={id}>
       <div className="card-body p-5">
         <h2 className="card-title underline" onClick={handleNoteClick}>
@@ -25,14 +25,14 @@ const NotesItem = ({ id, title, body, createdAt, archivedHandler, archived, dele
             Delete
           </button>
           <Modal id={id} title={title} deleteHandler={deleteHandler} />
-          <button className="btn btn-warning" onClick={() => archivedHandler(id)}>
+          <button className="btn btn-warning" onClick={() => (archived ? unarchiveHandler(id) : archivedHandler(id))}>
             {archived ? "Unarchive" : "Archive"}
           </button>
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default NotesItem
 

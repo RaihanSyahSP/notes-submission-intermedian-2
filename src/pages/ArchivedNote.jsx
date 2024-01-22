@@ -3,13 +3,14 @@ import PropTypes from "prop-types";
 
 import NotesContainer from '../components/NotesContainer'
 
-const ArchivedNote = ({notes, deleteHandler, archivedHandler}) => {
+const ArchivedNote = ({archivedNotes, deleteHandler, archivedHandler, unarchiveHandler}) => {
   return (
     <section>
         <NotesContainer
-          notes={notes}
+          notes={archivedNotes}
           deleteHandler={deleteHandler}
           archivedHandler={archivedHandler}
+          unarchiveHandler={unarchiveHandler}
         /> 
     </section>
   )
